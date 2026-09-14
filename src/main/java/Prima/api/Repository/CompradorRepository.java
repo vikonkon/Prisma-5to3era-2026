@@ -1,7 +1,6 @@
 package Prima.api.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
-import api.entidades.Comprador;
+import Prima.api.Entidades.Comprador;
 
 public interface CompradorRepository extends JpaRepository<Comprador, Long> {
 }
-    

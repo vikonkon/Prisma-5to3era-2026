@@ -1,5 +1,10 @@
 package Prima.api.Repository;
 
-public interface ProductosRepository {
+import Prima.api.Entidades.Productos;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ProductosRepository extends JpaRepository<Productos, Long>{
 
 }
+
