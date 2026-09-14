@@ -1,5 +1,9 @@
 package Prima.api.IService;
 
-public interface FacturasIService {
+import java.util.List;
+import Prima.api.Entidades.Facturas;
 
+public interface FacturasIService {
+    public List<Facturas> findAllFacturas();
+    public Facturas saveFacturas(Facturas facturas);
 }
