@@ -8,7 +8,7 @@ public class Facturas {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nomcli;
+    private String nomcomprador;
     private int iva;
     private float subtotal;
     private float total;
@@ -16,9 +16,9 @@ public class Facturas {
     @OneToOne(mappedBy = "factura")
     private Compra compra;
 
-    public Facturas(Long id, String nomcli, int iva, float subtotal, float total, Compra compra) {
+    public Facturas(Long id, String nomcomprador, int iva, float subtotal, float total, Compra compra) {
         this.id = id;
-        this.nomcli = nomcli;
+        this.nomcomprador = nomcomprador;
         this.iva = iva;
         this.subtotal = subtotal;
         this.total = total;
@@ -36,12 +36,12 @@ public class Facturas {
         this.id = id;
     }
 
-    public String getNomcli() {
-        return nomcli;
+    public String getNomcomprador() {
+        return nomcomprador;
     }
 
-    public void setNomcli(String nomcli) {
-        this.nomcli = nomcli;
+    public void setNomcomprador(String nomcomprador) {
+        this.nomcomprador = nomcomprador;
     }
 
     public int getIva() {
@@ -75,6 +75,5 @@ public class Facturas {
     public void setCompra(Compra compra) {
         this.compra = compra;
     }
-
-    
+   
 }

@@ -18,25 +18,23 @@ public class Compra {
     @JoinTable(name = "compra_productos", joinColumns = @JoinColumn(name = "compra_id"), inverseJoinColumns = @JoinColumn(name = "producto_id"))
     private List<Productos> productos;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Cliente_id")
-    private List<Comprador> clientes;
+    @ManyToOne
+    @JoinColumn(name = "comprador_id")
+    private Comprador comprador;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "factura_id", referencedColumnName = "id")
     private Facturas factura;
 
-    public Compra(Long id, int iva, float subtotal, float total, List<Productos> productos, List<Comprador> clientes,
-            Facturas factura) {
-        this.id = id;
-        this.iva = iva;
-        this.subtotal = subtotal;
-        this.total = total;
-        this.productos = productos;
-        this.clientes = clientes;
-        this.factura = factura;
-    }
-
+   public Compra(Long id, int iva, float subtotal, float total, List<Productos> productos, Comprador comprador, Facturas factura) {
+    this.id = id;
+    this.iva = iva;
+    this.subtotal = subtotal;
+    this.total = total;
+    this.productos = productos;
+    this.comprador = comprador;
+    this.factura = factura;
+}
     public Compra() {
     }
     
@@ -80,12 +78,12 @@ public class Compra {
         this.productos = productos;
     }
 
-    public List<Comprador> getClientes() {
-        return clientes;
+    public Comprador getComprador() {
+        return comprador;
     }
 
-    public void setClientes(List<Comprador> clientes) {
-        this.clientes = clientes;
+    public void setComprador(Comprador comprador) {
+        this.comprador = comprador;
     }
 
     public Facturas getFactura() {

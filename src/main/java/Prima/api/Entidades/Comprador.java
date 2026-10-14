@@ -15,8 +15,24 @@ public class Comprador {
     private String direccion;
     private int cuit;
 
-    @OneToMany(mappedBy = "clientes", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "comprador")
     private List<Compra> compras;
+    @ManyToMany
+    @JoinTable(
+    name = "comprador_producto",
+    joinColumns = @JoinColumn(name = "comprador_id"),
+    inverseJoinColumns = @JoinColumn(name = "producto_id")
+    )
+    private List<Productos> productos;
+
+
+    public List<Productos> getProductos() {
+        return productos;
+    }
+
+public void setProductos(List<Productos> productos) {
+    this.productos = productos;
+}
 
     public Comprador(Long id, String nombre, String apellido, String correo, String contrasena, String direccion,
             int cuit, List<Compra> compras) {
@@ -96,9 +112,5 @@ public class Comprador {
     public void setCompras(List<Compra> compras) {
         this.compras = compras;
     }
-
     
-    
-
-
 }

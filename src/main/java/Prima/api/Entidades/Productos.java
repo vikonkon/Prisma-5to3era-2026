@@ -12,11 +12,10 @@ public class Productos {
     private String URLimagen;
     private int cantidad;
 
-    @ManyToMany(mappedBy = "Productos")
-    private List<Comprador> compradores;
+    @ManyToMany(mappedBy = "productos")
+    private List<Compra> compras;
     public Productos() {
     }
-    
     
     public Productos(long id, String nombre, float precio, String descripcion, String uRLimagen, int cantidad) {
         this.id = id;
@@ -26,7 +25,6 @@ public class Productos {
         URLimagen = uRLimagen;
         this.cantidad = cantidad;
     }
-
 
     public long getId() {
         return id;
@@ -65,6 +63,6 @@ public class Productos {
         this.cantidad = cantidad;
     }
 
-    
+
 }
 
