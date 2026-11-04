@@ -1,0 +1,115 @@
+:root{--ocean:#0D2B45;--teal:#1E5A6E;--foam:#6BA7A0;--sand:#DCC8AA;--sky:#B7D4E6;--paper:#E9DCC3;--thread:#8B6B45;
+--display:"Abril Fatface",serif;--texto:"Courier Prime",monospace}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--texto);color:var(--ocean);line-height:1.6;background-color:var(--paper);
+background-image:linear-gradient(rgba(139,107,69,.18) 1px,transparent 1px),linear-gradient(90deg,rgba(139,107,69,.18) 1px,transparent 1px);background-size:32px 32px}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--teal);outline-offset:3px}
+
+/* Cabecera */
+.cinta{height:14px;background:var(--sand);border-bottom:3px solid var(--thread)}
+.barra{max-width:1100px;margin:0 auto;padding:.6rem 1.2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.logo img,.logo svg{height:120px;width:auto;display:block}
+nav{display:flex;gap:1.4rem;align-items:center;flex-wrap:wrap}
+nav a{text-decoration:none;font-weight:700;border-bottom:2px solid transparent}
+nav a:hover,nav a.activo{border-color:var(--teal)}
+#saludo{font-weight:700;color:var(--teal)}
+
+/* Botones */
+.btn{display:inline-block;border:2px solid var(--ocean);background:var(--ocean);color:var(--sand);font:700 1rem var(--texto);padding:.7rem 1.4rem;border-radius:999px;cursor:pointer;text-decoration:none;box-shadow:3px 3px 0 var(--foam)}
+.btn:hover{background:var(--teal)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* Sello en forma de estrella (como el "recommend item" de la guía) */
+.estrella{display:grid;place-items:center;text-align:center;background:var(--teal);color:var(--sand);font:400 .95rem/1.1 var(--display);
+clip-path:polygon(50% 0,61% 15%,79% 9%,82% 28%,100% 35%,88% 50%,100% 65%,82% 72%,79% 91%,61% 85%,50% 100%,39% 85%,21% 91%,18% 72%,0 65%,12% 50%,0 35%,18% 28%,21% 9%,39% 15%)}
+
+/* Inicio */
+.hero{max-width:1100px;margin:0 auto;padding:2.5rem 1.2rem;display:grid;grid-template-columns:1.2fr 1fr;gap:2rem;align-items:center}
+.hero h1{font:400 clamp(2.4rem,6vw,4.4rem)/1.02 var(--display);margin:0 0 1rem}
+.hero p{max-width:42ch;font-size:1.1rem;margin:0 0 1.6rem}
+.mascota{position:relative;justify-self:center}
+.mascota img{width:min(300px,70vw);display:block}
+.globo{position:absolute;top:0;left:-18px;max-width:170px;background:var(--sky);border:2px solid var(--ocean);border-radius:16px;padding:.5rem .8rem;font-weight:700;font-size:.9rem;transform:rotate(-4deg)}
+.mascota .estrella{position:absolute;right:-14px;bottom:20px;width:96px;height:96px;transform:rotate(12deg)}
+.tira{background:var(--ocean);color:var(--sand)}
+.tira ul{max-width:1100px;margin:0 auto;padding:.9rem 1.2rem;list-style:none;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+
+/* Catálogo */
+.catalogo{max-width:1100px;margin:0 auto;padding:2.5rem 1.2rem 4rem}
+.catalogo h2,.pagina h1{font:400 clamp(2rem,5vw,3.2rem)/1.05 var(--display);margin:0}
+#contador{margin:.3rem 0 0;color:var(--teal);font-weight:700}
+.filtros{display:flex;gap:.6rem;flex-wrap:wrap;margin:1rem 0 2rem}
+.filtros button{font:700 .95rem var(--texto);color:var(--ocean);background:transparent;border:2px solid var(--ocean);border-radius:999px;padding:.35rem 1rem;cursor:pointer}
+.filtros button:hover{background:var(--sky)}
+.filtros button.activo{background:var(--ocean);color:var(--sand)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1.8rem}
+.card{position:relative;display:flex;flex-direction:column;background:var(--paper);border:2px solid var(--ocean);box-shadow:5px 5px 0 var(--teal)}
+.foto{position:relative;aspect-ratio:4/5;overflow:hidden;display:grid;place-items:center;background:var(--sky);border-bottom:2px solid var(--ocean);font:400 4rem var(--display);color:var(--teal)}
+.foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cuerpo{flex:1;display:flex;flex-direction:column;gap:.3rem;padding:.9rem}
+.cuerpo h3{margin:0;font-size:1rem}
+.desc{margin:0;font-size:.85rem;color:var(--teal)}
+.stock{margin:0;font-size:.8rem}
+.precio{margin:auto 0 0;font:400 1.6rem var(--display)}
+.card .btn{width:100%;margin-top:.4rem;box-shadow:none}
+.card .estrella{position:absolute;top:-16px;right:-16px;z-index:1;width:84px;height:84px;font-size:.78rem;transform:rotate(10deg)}
+.estado{grid-column:1/-1;padding:2rem;text-align:center;border:2px dashed var(--thread)}
+
+/* Nosotros */
+.pagina{max-width:900px;margin:0 auto;padding:2.5rem 1.2rem 4rem;display:grid;grid-template-columns:1fr 240px;gap:2rem;align-items:start}
+.pagina .texto p{max-width:62ch;font-size:1.05rem}
+.pagina img{width:100%}
+
+footer{background:var(--ocean);color:var(--sand);text-align:center;padding:1.4rem 1rem;font-size:.9rem}
+footer p{margin:.2rem 0}
+
+/* Inicio de sesión y registro */
+body.acceso{min-height:100vh;display:grid;place-items:center;padding:1.2rem;background-color:var(--ocean);
+background-image:radial-gradient(circle at 12% 18%,var(--teal) 0 130px,transparent 131px),radial-gradient(circle at 92% 88%,var(--teal) 0 190px,transparent 191px)}
+.tarjeta{width:min(960px,100%);max-height:94vh;display:grid;grid-template-columns:1.05fr 1fr;background:var(--ocean);border-radius:28px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.izq{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;padding:1.6rem 2.6rem 1.6rem 1.6rem;text-align:center;
+background:var(--paper);border-radius:0 46% 38% 0/0 30% 50% 0}
+.izq .logo-grande{width:260px;height:auto}
+.escena{display:flex;align-items:flex-end;gap:.4rem}
+.escena svg{width:190px}
+.escena img{width:115px}
+.izq p{margin:0;max-width:26ch;font-weight:700}
+.der{display:flex;flex-direction:column;justify-content:center;overflow:auto;padding:2rem 2.2rem;color:var(--sky)}
+.der h1{margin:0 0 1rem;font:400 2.4rem var(--display);color:var(--sand)}
+.der form{display:flex;flex-direction:column;gap:.3rem}
+.der form[hidden],.msg[hidden]{display:none}
+.der label{font-weight:700;font-size:.9rem}
+.der input{margin-bottom:.5rem;padding:.65rem 1rem;border:2px solid transparent;border-radius:999px;background:rgba(0,0,0,.28);color:#fff;font:1rem var(--texto)}
+.der input:focus{border-color:var(--foam);outline:none}
+.der .btn{margin-top:.5rem;background:var(--foam);border-color:var(--foam);color:var(--ocean);box-shadow:none}
+.der .btn:hover{background:var(--sky)}
+.cambio{margin:1rem 0 0;font-size:.9rem;text-align:center}
+.cambio a{color:var(--foam);font-weight:700}
+.msg{margin:0 0 .8rem;padding:.5rem .8rem;border-radius:12px;background:var(--sand);color:var(--ocean);font-weight:700;font-size:.9rem}
+.msg.ok{background:var(--foam)}
+
+@media(max-width:800px){
+.hero,.pagina{grid-template-columns:1fr}
+.tarjeta{grid-template-columns:1fr;max-height:none}
+.izq{padding:1rem;border-radius:0 0 40% 40%/0 0 20% 20%}
+.escena,.izq p{display:none}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Carrito */
+.btn-claro{background:transparent;color:var(--ocean);box-shadow:none}
+.btn-claro:hover{background:var(--sky)}
+.carrito{width:min(520px,92vw);padding:1.4rem;border:2px solid var(--ocean);background:var(--paper);color:var(--ocean);font-family:var(--texto);box-shadow:6px 6px 0 var(--teal)}
+.carrito::backdrop{background:rgba(13,43,69,.6)}
+.carrito h2{margin:0 0 .8rem;font:400 2rem var(--display)}
+.linea{display:grid;grid-template-columns:1fr auto auto;gap:.8rem;align-items:center;padding:.5rem 0;border-bottom:1px dashed var(--thread)}
+.cant{display:flex;align-items:center;gap:.4rem}
+.cant button{width:1.7rem;height:1.7rem;border:2px solid var(--ocean);border-radius:50%;background:transparent;color:var(--ocean);font:700 1rem var(--texto);cursor:pointer}
+.cant button:hover{background:var(--sky)}
+.totales{display:grid;grid-template-columns:1fr auto;gap:.2rem 1rem;margin:1rem 0}
+.totales dt,.totales dd{margin:0}
+.totales dt:last-of-type,.totales dd:last-of-type{font:400 1.5rem var(--display)}
+.aviso{margin:0 0 .8rem;padding:.5rem .8rem;border-radius:12px;background:var(--sand);font-weight:700;font-size:.9rem}
+.aviso[hidden]{display:none}
+.acciones{display:flex;gap:.8rem;justify-content:flex-end;flex-wrap:wrap}

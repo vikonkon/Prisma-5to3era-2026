@@ -1,56 +1,118 @@
 package Prima.api.Entidades;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
+
 @Entity
 public class Comprador {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
-    private float compra;
+    private String apellido;
+    private String correo;
+    private String contrasena;
+    private String direccion;
+    private Long cuit;
 
-    @ManyToMany(mappedBy = "Comprador")
-    private List<Peleador> peleadores;
-    public Comprador() {
+    @JsonIgnore
+    @OneToMany(mappedBy = "comprador")
+    private List<Compra> compras;
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+    name = "comprador_producto",
+    joinColumns = @JoinColumn(name = "comprador_id"),
+    inverseJoinColumns = @JoinColumn(name = "producto_id")
+    )
+    private List<Productos> productos;
+
+
+    public List<Productos> getProductos() {
+        return productos;
     }
 
-    public Comprador(Long id, String nombre, float compra) {
-    this.id = id;
-    this.nombre = nombre;
-    this.compra = compra;
-    
+public void setProductos(List<Productos> productos) {
+    this.productos = productos;
+}
+
+    public Comprador(Long id, String nombre, String apellido, String correo, String contrasena, String direccion,
+            Long cuit, List<Compra> compras) {
+        this.id = id;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.correo = correo;
+        this.contrasena = contrasena;
+        this.direccion = direccion;
+        this.cuit = cuit;
+        this.compras = compras;
+    }
+
+    public void setCuit(Long cuit) {
+        this.cuit = cuit;
+    }
+
+    public Comprador(){
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public void setId(Long id) {
-    this.id = id;
-    }
-    public void setNombre(String nombre) {
-    this.nombre = nombre;
-    }
-
-    public void setcompra(Float compra) {
-    this.compra= compra;
-    }
-
-
-    public void setPeso(float peso) {
-    this.peso = peso;
-    }   
-
-    public Long getId() {
-    return id;
+        this.id = id;
     }
 
     public String getNombre() {
-    return nombre;
+        return nombre;
     }
 
-    public Long getBonificadorDanio() {
-    return bonificadorDanio;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public float getPeso() {
-    return peso;
+    public String getApellido() {
+        return apellido;
     }
 
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
+    public String getContrasena() {
+        return contrasena;
+    }
+
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public Long getCuit() {
+        return cuit;
+    }
+    
+    public List<Compra> getCompras() {
+        return compras;
+    }
+
+    public void setCompras(List<Compra> compras) {
+        this.compras = compras;
+    }
+    
 }
