@@ -17,4 +17,7 @@ public class CompradorService implements CompradorIService {
     public Comprador saveComprador(Comprador comprador) {
         return cRepository.save(comprador);
     }
+    public Comprador buscarPorCorreo(String correo) {
+        return cRepository.findByCorreo(correo);
+    }
 }

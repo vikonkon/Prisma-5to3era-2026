@@ -1,6 +1,6 @@
 package Prima.api.Entidades;
 import jakarta.persistence.*;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 
 @Entity
@@ -13,10 +13,12 @@ public class Comprador {
     private String correo;
     private String contrasena;
     private String direccion;
-    private int cuit;
+    private Long cuit;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "comprador")
     private List<Compra> compras;
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
     name = "comprador_producto",
@@ -35,7 +37,7 @@ public void setProductos(List<Productos> productos) {
 }
 
     public Comprador(Long id, String nombre, String apellido, String correo, String contrasena, String direccion,
-            int cuit, List<Compra> compras) {
+            Long cuit, List<Compra> compras) {
         this.id = id;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -44,6 +46,10 @@ public void setProductos(List<Productos> productos) {
         this.direccion = direccion;
         this.cuit = cuit;
         this.compras = compras;
+    }
+
+    public void setCuit(Long cuit) {
+        this.cuit = cuit;
     }
 
     public Comprador(){
@@ -97,14 +103,10 @@ public void setProductos(List<Productos> productos) {
         this.direccion = direccion;
     }
 
-    public int getCuit() {
+    public Long getCuit() {
         return cuit;
     }
-
-    public void setCuit(int cuit) {
-        this.cuit = cuit;
-    }
-
+    
     public List<Compra> getCompras() {
         return compras;
     }
