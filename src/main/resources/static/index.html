@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Prisma · Ropa vintage</title>
   <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="img/hilo.svg">
   <link rel="stylesheet" href="css/style.css">
   <!-- Si no hay sesión iniciada, te manda a login.html -->
   <script src="js/sesion.js"></script>
@@ -55,6 +56,68 @@
         <li>Ropa que vuelve a usarse</li>
       </ul>
     </div>
+    <!-- Panel del gerente: arranca oculto y gerente.js lo muestra solo si la cuenta tiene rol GERENTE -->
+    <section id="panel-gerente" class="panel-gerente" hidden>
+      <h2>Administración Prisma (Gerente)</h2>
+      <p id="gerente-msg" class="aviso" role="alert" hidden></p>
+
+      <div class="gerente-cols">
+        <form id="form-reponer" class="gerente-form">
+          <h3>Renovar stock</h3>
+          <div class="campo completo">
+            <label for="rep-producto">Producto</label>
+            <select id="rep-producto" required></select>
+          </div>
+          <div class="campo completo">
+            <label for="rep-cantidad">Unidades a sumar</label>
+            <input type="number" id="rep-cantidad" min="1" step="1" placeholder="Ej: 10" required>
+          </div>
+          <div class="acciones">
+            <button type="submit" class="btn">Actualizar stock</button>
+          </div>
+        </form>
+
+        <form id="form-producto" class="gerente-form">
+          <h3 id="prod-titulo">Agregar producto</h3>
+          <input type="hidden" id="prod-id">
+          <div class="campo completo">
+            <label for="prod-nombre">Nombre</label>
+            <input type="text" id="prod-nombre" placeholder="Ej: Remera vintage azul" required>
+          </div>
+          <div class="campo">
+            <label for="prod-precio">Precio (ARS)</label>
+            <input type="number" id="prod-precio" min="1" step="any" required>
+          </div>
+          <div class="campo">
+            <label for="prod-cantidad">Stock</label>
+            <input type="number" id="prod-cantidad" min="0" step="1" value="0" required>
+          </div>
+          <div class="campo completo">
+            <label for="prod-categoria">Categoría</label>
+            <select id="prod-categoria" required>
+              <option value="" disabled selected>Elegí una categoría</option>
+              <option value="remeras">Remeras</option>
+              <option value="pantalones">Pantalones</option>
+              <option value="abrigos">Abrigos</option>
+              <option value="calzado">Calzado</option>
+            </select>
+          </div>
+          <div class="campo completo">
+            <label for="prod-descripcion">Descripción</label>
+            <input type="text" id="prod-descripcion">
+          </div>
+          <div class="campo completo">
+            <label for="prod-imagen-url">Imagen (dirección URL)</label>
+            <input type="text" id="prod-imagen-url" placeholder="https://…">
+          </div>
+          <div class="acciones">
+            <button type="button" id="prod-eliminar" class="btn btn-claro" hidden>Eliminar producto</button>
+            <button type="button" id="prod-cancelar" class="btn btn-claro" hidden>Cancelar edición</button>
+            <button type="submit" id="prod-guardar" class="btn">Agregar producto</button>
+          </div>
+        </form>
+      </div>
+    </section>
 
     <!-- CATÁLOGO -->
     <section class="catalogo" id="catalogo">
@@ -92,6 +155,30 @@
     </div>
   </dialog>
 
+  <!-- Gracias por tu compra -->
+  <dialog id="gracias" class="gracias" aria-labelledby="gracias-titulo">
+    <div class="gracias-cab">
+      <img class="gracias-gato" src="img/hilo.svg" alt="Hilo, la mascota de Prisma">
+      <div>
+        <h2 id="gracias-titulo">¡Gracias por tu compra!</h2>
+        <p class="gracias-marca">Prisma · Ropa vintage</p>
+        <p id="gracias-sub" class="gracias-sub"></p>
+      </div>
+    </div>
+    <div class="gracias-cuerpo">
+      <div id="gracias-items"></div>
+      <dl class="totales">
+        <dt>Subtotal</dt><dd id="g-subtotal"></dd>
+        <dt>IVA (21%)</dt><dd id="g-iva"></dd>
+        <dt>Total</dt><dd id="g-total"></dd>
+      </dl>
+      <div class="acciones">
+        <button type="button" id="g-cerrar" class="btn">Seguir mirando</button>
+      </div>
+    </div>
+  </dialog>
+
   <script src="js/productos.js"></script>
+  <script src="js/gerente.js"></script>
 </body>
 </html>

@@ -29,6 +29,9 @@ public ResponseEntity<?> createComprador(@RequestBody Comprador comprador) {
     if (aService.buscarPorCorreo(comprador.getCorreo()) != null) {
         return ResponseEntity.status(409).body("Ese correo ya está registrado");
     }
+        // Seguridad: quien se registra desde la web SIEMPRE es cliente (el rol gerente se asigna en la base de datos)
+    comprador.setId(null);
+    comprador.setRol("CLIENTE");
         aService.saveComprador(comprador);
     return ResponseEntity.ok("Comprador registrado");
 }
@@ -37,14 +40,16 @@ public ResponseEntity<?> createComprador(@RequestBody Comprador comprador) {
 public ResponseEntity<?> login(@RequestBody Comprador datos) {
     Comprador c = aService.buscarPorCorreo(datos.getCorreo());
     // Si no existe el correo o la contraseña no coincide, devolvemos error 401
-    if (c == null || !datos.getContrasena().equals(c.getContrasena())) {
+    if (c == null || datos.getContrasena() == null || !datos.getContrasena().equals(c.getContrasena())) {
         return ResponseEntity.status(401).body("Correo o contraseña incorrectos");
     }
-    // Devolvemos solo algunos datos (nunca la contraseña)
+    // Devolvemos solo algunos datos (nunca la contraseña): ahora también el rol y un token de sesión
     return ResponseEntity.ok(Map.of(
         "id", c.getId(),
         "nombre", c.getNombre(),
-        "correo", c.getCorreo()
+        "correo", c.getCorreo(),
+        "rol", c.getRol() == null ? "CLIENTE" : c.getRol().trim().toUpperCase(),
+        "token", aService.iniciarSesion(c)
     ));
 }
 }

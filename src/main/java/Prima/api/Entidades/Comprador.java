@@ -14,6 +14,8 @@ public class Comprador {
     private String contrasena;
     private String direccion;
     private Long cuit;
+    @Column(name = "rol", length = 20)
+    private String rol = "CLIENTE";
 
     @JsonIgnore
     @OneToMany(mappedBy = "comprador")
@@ -47,7 +49,7 @@ public void setProductos(List<Productos> productos) {
         this.cuit = cuit;
         this.compras = compras;
     }
-
+    
     public void setCuit(Long cuit) {
         this.cuit = cuit;
     }
@@ -113,6 +115,12 @@ public void setProductos(List<Productos> productos) {
 
     public void setCompras(List<Compra> compras) {
         this.compras = compras;
+    }
+    public String getRol() { 
+        return rol; 
+    }
+    public void setRol(String rol) {
+        this.rol = rol; 
     }
     
 }

@@ -1,10 +1,13 @@
 "use strict";
 
-const API_PRODUCTOS = location.port === "8080" ? "/api/productos" : "http://localhost:8080/api/productos";
+const ORIGEN = location.port === "8080" ? "" : "http://localhost:8080";
+const API_PRODUCTOS = ORIGEN + "/api/productos";
 const grid = document.getElementById("grid");
 const contador = document.getElementById("contador");
 const precioAR = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
 let todos = [];
+let categoriaActual = "todo";
+const controles = new Map(); // id de producto -> { producto, caja } (para refrescar el selector de cantidad)
 
 // Crea un elemento HTML con clase y texto (más corto que escribirlo cada vez)
 function el(tag, clase, texto) {
@@ -14,13 +17,9 @@ function el(tag, clase, texto) {
   return e;
 }
 
-// Decide la categoría mirando cómo empieza el nombre del producto
+// La categoría es la que eligió el gerente (remeras, pantalones, abrigos o calzado)
 function categoria(p) {
-  const n = (p.nombre || "").toLowerCase();
-  if (n.startsWith("remera")) return "remeras";
-  if (n.startsWith("pantal")) return "pantalones";
-  if (n.startsWith("zapatilla")) return "calzado";
-  return "abrigos"; // camperas y buzos
+  return p.categoria || "";
 }
 
 function mostrarEstado(titulo, mensaje) {
@@ -35,13 +34,17 @@ async function cargar() {
     const res = await fetch(API_PRODUCTOS);
     if (!res.ok) throw new Error("Error " + res.status);
     todos = await res.json();
-    mostrar("todo");
+    sincronizarCarrito();
+    mostrar(categoriaActual);
+    if (typeof alCargarProductos === "function") alCargarProductos(); // avisa al panel del gerente
   } catch (error) {
     mostrarEstado("No pudimos cargar la colección", "Verificá que Spring Boot esté encendido. Detalle: " + error.message);
   }
 }
 
 function mostrar(cat) {
+  categoriaActual = cat;
+  controles.clear();
   document.querySelectorAll(".filtros button").forEach((b) => b.classList.toggle("activo", b.dataset.cat === cat));
   const lista = cat === "todo" ? todos : todos.filter((p) => categoria(p) === cat);
   contador.textContent = `${lista.length} ${lista.length === 1 ? "prenda" : "prendas"}`;
@@ -70,10 +73,10 @@ function crearTarjeta(p) {
   if (cant === 0) tarjeta.append(el("div", "estrella", "Agotado"));
   else if (cant <= 10) tarjeta.append(el("div", "estrella", "¡Últimas!"));
 
-  const boton = el("button", "btn", "Comprar");
-  boton.type = "button";
-  boton.disabled = !(cant > 0);
-  boton.addEventListener("click", () => comprarProducto(p));
+  // Zona de compra: botón "Agregar" o, si ya está en el carrito, el selector con la cantidad
+  const caja = el("div", "compra");
+  controles.set(p.id, { producto: p, caja });
+  dibujarControl(p, caja);
 
   const cuerpo = el("div", "cuerpo");
   cuerpo.append(
@@ -81,11 +84,87 @@ function crearTarjeta(p) {
     el("p", "desc", p.descripcion || ""),
     el("p", "stock", cant > 0 ? `${cant} en stock` : "Sin stock"),
     el("p", "precio", precioAR.format(Number(p.precio))),
-    boton
+    caja
   );
 
+  if (esGerente) {
+    if (!p.categoria) cuerpo.append(el("p", "stock", "⚠ Sin categoría: tocá Editar y elegí una"));
+    const editar = el("button", "btn btn-claro", "Editar producto");
+    editar.type = "button";
+    editar.addEventListener("click", () => editarProducto(p)); // definido en gerente.js
+    cuerpo.append(editar);
+  }
+
   tarjeta.append(foto, cuerpo);
+  dibujarControl(p, caja); // ahora que la caja está dentro de la tarjeta, marca la cinta si ya está en el carrito
   return tarjeta;
+}
+
+// Dibuja (o redibuja) la zona de compra de una prenda según lo que haya en el carrito
+function dibujarControl(p, caja) {
+  const stock = Number(p.cantidad);
+  const item = carrito.find((i) => i.id === p.id);
+  const n = item ? item.cantidad : 0;
+  caja.replaceChildren();
+  const tarjeta = caja.closest(".card");
+  if (tarjeta) tarjeta.classList.toggle("elegida", n > 0); // cinta "En tu carrito"
+
+  if (!(stock > 0)) {
+    const sin = el("button", "btn", "Sin stock");
+    sin.type = "button";
+    sin.disabled = true;
+    caja.append(sin);
+    return;
+  }
+
+  if (n === 0) {
+    const agregar = el("button", "btn", "Agregar al carrito");
+    agregar.type = "button";
+    agregar.addEventListener("click", () => fijarCantidad(p, 1));
+    caja.append(agregar);
+    return;
+  }
+
+  const menos = el("button", null, "−");
+  menos.type = "button";
+  menos.setAttribute("aria-label", "Quitar una unidad");
+  menos.addEventListener("click", () => fijarCantidad(p, n - 1));
+
+  const mas = el("button", null, "+");
+  mas.type = "button";
+  mas.setAttribute("aria-label", "Agregar una unidad");
+  mas.disabled = n >= stock;
+  mas.addEventListener("click", () => fijarCantidad(p, n + 1));
+
+  const campo = document.createElement("input");
+  campo.type = "number";
+  campo.min = "0";
+  campo.max = String(stock);
+  campo.value = String(n);
+  campo.setAttribute("aria-label", "Cantidad de " + p.nombre);
+  campo.addEventListener("change", () => fijarCantidad(p, parseInt(campo.value, 10) || 0));
+
+  const selector = el("div", "selector");
+  selector.append(menos, campo, mas);
+  caja.append(
+    selector,
+    el("p", "en-carrito", `${n} ${n === 1 ? "unidad" : "unidades"} en tu carrito`)
+  );
+}
+
+// Vuelve a dibujar la zona de compra de todas las prendas visibles
+function refrescarControles() {
+  controles.forEach(({ producto, caja }) => dibujarControl(producto, caja));
+}
+
+// Pone en el carrito exactamente "nueva" unidades de esa prenda (0 = la saca; nunca más que el stock)
+function fijarCantidad(p, nueva) {
+  nueva = Math.max(0, Math.min(nueva, Number(p.cantidad)));
+  const item = carrito.find((i) => i.id === p.id);
+  if (nueva === 0) carrito = carrito.filter((i) => i.id !== p.id);
+  else if (item) { item.cantidad = nueva; item.stock = p.cantidad; }
+  else carrito.push({ id: p.id, nombre: p.nombre, precio: Number(p.precio), cantidad: nueva, stock: p.cantidad });
+  guardarCarrito();
 }
 
 // ================== CARRITO (se guarda en localStorage) ==================
@@ -101,18 +180,22 @@ function avisoCarrito(texto) {
 function guardarCarrito() {
   localStorage.setItem("prismaCarrito", JSON.stringify(carrito));
   dibujarCarrito();
+  refrescarControles();
 }
 
-// Se llama al tocar "Comprar" en una prenda: la agrega al carrito
-function comprarProducto(producto) {
-  const item = carrito.find((i) => i.id === producto.id);
-  if (item) {
-    if (item.cantidad >= producto.cantidad) { alert("No hay más stock de esta prenda."); return; }
-    item.cantidad++;
-  } else {
-    carrito.push({ id: producto.id, nombre: producto.nombre, precio: Number(producto.precio), cantidad: 1, stock: producto.cantidad });
-  }
-  guardarCarrito();
+// Después de recargar el catálogo: actualiza stock y precios del carrito y saca lo que ya no existe
+function sincronizarCarrito() {
+  carrito = carrito.filter((item) => {
+    const p = todos.find((x) => x.id === item.id);
+    if (!p || Number(p.cantidad) <= 0) return false;
+    item.stock = p.cantidad;
+    item.precio = Number(p.precio);
+    item.nombre = p.nombre;
+    item.cantidad = Math.min(item.cantidad, Number(p.cantidad));
+    return true;
+  });
+  localStorage.setItem("prismaCarrito", JSON.stringify(carrito));
+  dibujarCarrito();
 }
 
 function cambiarCantidad(item, cambio) {
@@ -153,43 +236,49 @@ function dibujarCarrito() {
   document.getElementById("c-comprar").disabled = carrito.length === 0;
 }
 
-// Al confirmar la compra, lo único que se guarda en la base de datos es el stock nuevo
+// Ventana de "Gracias por tu compra" con el detalle de lo que se compró
+function mostrarGracias(compra, items) {
+  const nombre = usuario && usuario.nombre ? usuario.nombre : "";
+  document.getElementById("gracias-sub").textContent =
+    (nombre ? nombre + ", tu" : "Tu") + " pedido quedó registrado" + (compra.id ? " (compra #" + compra.id + ")." : ".");
+
+  const lista = document.getElementById("gracias-items");
+  lista.replaceChildren(...items.map((i) => {
+    const linea = el("div", "linea");
+    linea.append(el("span", null, `${i.cantidad} × ${i.nombre}`), el("span", null, precioAR.format(i.precio * i.cantidad)));
+    return linea;
+  }));
+
+  document.getElementById("g-subtotal").textContent = precioAR.format(compra.subtotal);
+  document.getElementById("g-iva").textContent = precioAR.format(compra.iva);
+  document.getElementById("g-total").textContent = precioAR.format(compra.total);
+  document.getElementById("gracias").showModal();
+}
+
+// Al confirmar, se crea una Compra (con su Factura) en el servidor, que verifica y descuenta el stock
 async function confirmarCompra() {
   avisoCarrito("");
   try {
-    // 1) Pedimos a la base de datos el stock actual
-    const res = await fetch(API_PRODUCTOS);
-    if (!res.ok) throw new Error("Error " + res.status);
-    const actuales = await res.json();
-
-    // 2) Verificamos que alcance el stock de cada prenda
-    for (const item of carrito) {
-      const p = actuales.find((x) => x.id === item.id);
-      if (!p || p.cantidad < item.cantidad) {
-        avisoCarrito(`No hay stock suficiente de ${item.nombre}.`);
-        return;
-      }
+    // Un mismo id repetido = una unidad más de esa prenda
+    const productosIds = carrito.flatMap((i) => Array.from({ length: i.cantidad }, () => i.id));
+    const res = await fetch(ORIGEN + "/api/compras/nueva", {
+      method: "POST",
+      headers: cabeceras({ "Content-Type": "application/json" }),
+      body: JSON.stringify({ productosIds })
+    });
+    if (res.status === 401) { sesionVencida(); return; }
+    if (!res.ok) {
+      avisoCarrito((await res.text()) || "No se pudo completar la compra.");
+      cargar(); // por si cambió el stock
+      return;
     }
 
-    // 3) Guardamos el stock nuevo de cada prenda (POST con un id existente actualiza el producto)
-    for (const item of carrito) {
-      const p = actuales.find((x) => x.id === item.id);
-      p.cantidad = p.cantidad - item.cantidad;
-      const r = await fetch(API_PRODUCTOS, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(p)
-      });
-      if (!r.ok) throw new Error("Error " + r.status);
-    }
-
-    // 4) Listo: vaciamos el carrito y mostramos el resumen
-    const subtotal = carrito.reduce((suma, i) => suma + i.precio * i.cantidad, 0);
-    const iva = Math.round(subtotal * 0.21);
+    const compra = await res.json(); // subtotal, IVA y total calculados por el servidor
+    const items = carrito.map((i) => ({ nombre: i.nombre, cantidad: i.cantidad, precio: i.precio })); // antes de vaciar el carrito
     carrito = [];
     guardarCarrito();
     document.getElementById("carrito").close();
-    alert(`¡Compra realizada!\nSubtotal: ${precioAR.format(subtotal)}\nIVA: ${precioAR.format(iva)}\nTotal: ${precioAR.format(subtotal + iva)}`);
+    mostrarGracias(compra, items);
     cargar(); // muestra el stock actualizado
   } catch (error) {
     avisoCarrito("No se pudo completar la compra. ¿Está encendido Spring Boot? " + error.message);
@@ -204,6 +293,9 @@ document.getElementById("btn-carrito").addEventListener("click", (e) => {
 });
 document.getElementById("c-cerrar").addEventListener("click", () => document.getElementById("carrito").close());
 document.getElementById("c-comprar").addEventListener("click", confirmarCompra);
+const dialogoGracias = document.getElementById("gracias");
+document.getElementById("g-cerrar").addEventListener("click", () => dialogoGracias.close());
+dialogoGracias.addEventListener("click", (e) => { if (e.target === dialogoGracias) dialogoGracias.close(); }); // clic afuera = cerrar
 // ======================================================
 
 document.querySelectorAll(".filtros button").forEach((b) => {
