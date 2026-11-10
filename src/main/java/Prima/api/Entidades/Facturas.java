@@ -2,6 +2,7 @@ package Prima.api.Entidades;
 
 import java.util.List;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Facturas {
@@ -13,6 +14,7 @@ public class Facturas {
     private float subtotal;
     private float total;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "factura")
     private Compra compra;
 

@@ -11,6 +11,8 @@ public class Productos {
     private String descripcion;
     private String URLimagen;
     private int cantidad;
+    private String categoria;          // remeras, pantalones, abrigos o calzado (si está vacía se deduce del nombre)
+    private Boolean activo = true;     // false = eliminado (deja de aparecer en la tienda, pero se conserva el historial de compras)
 
     @ManyToMany(mappedBy = "productos")
     private List<Compra> compras;
@@ -63,6 +65,17 @@ public class Productos {
         this.cantidad = cantidad;
     }
 
+    public String getCategoria() {
+        return categoria;
+    }
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+    public Boolean getActivo() {
+        return activo;
+    }
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
+    }
 
 }
-

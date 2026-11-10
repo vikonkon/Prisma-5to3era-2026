@@ -14,9 +14,13 @@ public class Compra {
     private float subtotal;
     private float total;
 
-    @ManyToMany
-    @JoinTable(name = "compra_productos", joinColumns = @JoinColumn(name = "compra_id"), inverseJoinColumns = @JoinColumn(name = "producto_id"))
-    private List<Productos> productos;
+   @ManyToMany
+    @JoinTable(
+        name = "compra_productos",
+        joinColumns = @JoinColumn(name = "compra_id"),
+        inverseJoinColumns = @JoinColumn(name = "producto_id")
+    )
+    private List<Productos> productos = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "comprador_id")
