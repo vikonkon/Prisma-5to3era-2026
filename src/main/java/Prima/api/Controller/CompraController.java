@@ -37,7 +37,7 @@ public class CompraController {
                     "iva", guardada.getIva(),
                     "total", guardada.getTotal()));
         } catch (RuntimeException e) {
-            // Si algo falla (ej. sin stock), devolvemos el error al frontend
+            // Si algo falla devolvemos el error 
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
