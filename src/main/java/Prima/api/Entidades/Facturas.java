@@ -1,5 +1,6 @@
 package Prima.api.Entidades;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -13,6 +14,8 @@ public class Facturas {
     private int iva;
     private float subtotal;
     private float total;
+    private String medioPago;       // ej: Tarjeta de crédito Visa terminada en 4242 (nunca se guarda el número completo)
+    private LocalDateTime fecha; // fecha y hora de emisión (las facturas viejas no la tienen)
 
     @JsonIgnore
     @OneToOne(mappedBy = "factura")
@@ -68,6 +71,22 @@ public class Facturas {
 
     public void setTotal(float total) {
         this.total = total;
+    }
+
+    public String getMedioPago() {
+        return medioPago;
+    }
+
+    public void setMedioPago(String medioPago) {
+        this.medioPago = medioPago;
+    }
+
+    public LocalDateTime getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(LocalDateTime fecha) {
+        this.fecha = fecha;
     }
 
     public Compra getCompra() {

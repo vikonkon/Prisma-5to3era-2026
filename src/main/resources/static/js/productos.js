@@ -249,26 +249,56 @@ function mostrarGracias(compra, items) {
     return linea;
   }));
 
+  document.getElementById("g-factura").href = "factura.html?id=" + encodeURIComponent(compra.facturaId);
   document.getElementById("g-subtotal").textContent = precioAR.format(compra.subtotal);
   document.getElementById("g-iva").textContent = precioAR.format(compra.iva);
   document.getElementById("g-total").textContent = precioAR.format(compra.total);
   document.getElementById("gracias").showModal();
 }
 
-// Al confirmar, se crea una Compra (con su Factura) en el servidor, que verifica y descuenta el stock
-async function confirmarCompra() {
-  avisoCarrito("");
+// ---------- Pago con tarjeta (simulado) ----------
+const dialogoPago = document.getElementById("pago");
+const formPago = document.getElementById("form-pago");
+
+function avisoPago(texto) {
+  const a = document.getElementById("pago-msg");
+  a.textContent = texto;
+  a.hidden = !texto;
+}
+
+// Marca de la tarjeta según cómo empieza el número
+function marcaTarjeta(digitos) {
+  if (/^4/.test(digitos)) return "Visa";
+  if (/^(5[1-5]|222[1-9]|22[3-9]\d|2[3-6]\d\d|27[01]\d|2720)/.test(digitos)) return "Mastercard";
+  if (/^3[47]/.test(digitos)) return "American Express";
+  return "";
+}
+
+// Paso 1: del carrito pasamos a pedir los datos de la tarjeta
+function abrirPago() {
+  if (carrito.length === 0) return;
+  const subtotal = carrito.reduce((suma, i) => suma + i.precio * i.cantidad, 0);
+  const total = subtotal + Math.round(subtotal * 0.21);
+  document.getElementById("p-total").textContent = precioAR.format(total);
+  formPago.reset();
+  avisoPago("");
+  document.getElementById("carrito").close();
+  dialogoPago.showModal();
+}
+
+// Paso 2: con el pago aceptado, el servidor crea la Compra y su Factura y descuenta el stock
+async function confirmarCompra(pago) {
   try {
     // Un mismo id repetido = una unidad más de esa prenda
     const productosIds = carrito.flatMap((i) => Array.from({ length: i.cantidad }, () => i.id));
     const res = await fetch(ORIGEN + "/api/compras/nueva", {
       method: "POST",
       headers: cabeceras({ "Content-Type": "application/json" }),
-      body: JSON.stringify({ productosIds })
+      body: JSON.stringify({ productosIds, ...pago })
     });
     if (res.status === 401) { sesionVencida(); return; }
     if (!res.ok) {
-      avisoCarrito((await res.text()) || "No se pudo completar la compra.");
+      avisoPago((await res.text()) || "No se pudo completar la compra.");
       cargar(); // por si cambió el stock
       return;
     }
@@ -277,13 +307,57 @@ async function confirmarCompra() {
     const items = carrito.map((i) => ({ nombre: i.nombre, cantidad: i.cantidad, precio: i.precio })); // antes de vaciar el carrito
     carrito = [];
     guardarCarrito();
-    document.getElementById("carrito").close();
+    dialogoPago.close();
     mostrarGracias(compra, items);
     cargar(); // muestra el stock actualizado
   } catch (error) {
-    avisoCarrito("No se pudo completar la compra. ¿Está encendido Spring Boot? " + error.message);
+    avisoPago("No se pudo completar la compra. ¿Está encendido Spring Boot? " + error.message);
   }
 }
+
+formPago.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  avisoPago("");
+  const numero = document.getElementById("p-numero").value.replace(/\D/g, "");
+  const titular = document.getElementById("p-titular").value.trim();
+  const venc = document.getElementById("p-venc").value.trim();
+  const cvv = document.getElementById("p-cvv").value.trim();
+  const marca = marcaTarjeta(numero);
+  const largoCvv = marca === "American Express" ? 4 : 3;
+
+  // Solo se controla la cantidad de caracteres: cualquier número sirve (es un pago de demostración)
+  const largoNumero = marca === "American Express" ? 15 : 16;
+  if (numero.length !== largoNumero) return avisoPago(`El número de tarjeta debe tener ${largoNumero} dígitos.`);
+  if (titular.length < 3) return avisoPago("Ingresá el nombre del titular.");
+  if (venc.replace(/\D/g, "").length !== 4) return avisoPago("El vencimiento debe tener el formato MM/AA (4 dígitos).");
+  if (cvv.length !== largoCvv) return avisoPago(`El código de seguridad debe tener ${largoCvv} dígitos.`);
+
+  const boton = document.getElementById("p-pagar");
+  boton.disabled = true;
+  boton.textContent = "Procesando…";
+  // Al servidor solo viaja el tipo, la marca y los últimos 4 dígitos: nunca el número completo ni el código
+  await confirmarCompra({ medioPago: document.getElementById("p-tipo").value, marca, ultimos4: numero.slice(-4) });
+  boton.disabled = false;
+  boton.textContent = "Pagar";
+});
+
+// Formato mientras se escribe
+document.getElementById("p-numero").addEventListener("input", (e) => {
+  e.target.value = e.target.value.replace(/\D/g, "").slice(0, 19).replace(/(.{4})/g, "$1 ").trim();
+});
+document.getElementById("p-venc").addEventListener("input", (e) => {
+  const d = e.target.value.replace(/\D/g, "").slice(0, 4);
+  e.target.value = d.length > 2 ? d.slice(0, 2) + "/" + d.slice(2) : d;
+});
+document.getElementById("p-cvv").addEventListener("input", (e) => {
+  e.target.value = e.target.value.replace(/\D/g, "").slice(0, 4);
+});
+document.getElementById("p-volver").addEventListener("click", () => {
+  dialogoPago.close();
+  dibujarCarrito();
+  document.getElementById("carrito").showModal();
+});
+dialogoPago.addEventListener("close", () => formPago.reset()); // los datos de la tarjeta nunca quedan en pantalla
 
 document.getElementById("btn-carrito").addEventListener("click", (e) => {
   e.preventDefault();
@@ -292,7 +366,7 @@ document.getElementById("btn-carrito").addEventListener("click", (e) => {
   document.getElementById("carrito").showModal();
 });
 document.getElementById("c-cerrar").addEventListener("click", () => document.getElementById("carrito").close());
-document.getElementById("c-comprar").addEventListener("click", confirmarCompra);
+document.getElementById("c-comprar").addEventListener("click", abrirPago);
 const dialogoGracias = document.getElementById("gracias");
 document.getElementById("g-cerrar").addEventListener("click", () => dialogoGracias.close());
 dialogoGracias.addEventListener("click", (e) => { if (e.target === dialogoGracias) dialogoGracias.close(); }); // clic afuera = cerrar

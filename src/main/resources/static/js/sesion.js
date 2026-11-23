@@ -32,6 +32,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const saludo = document.getElementById("saludo");
   if (saludo && usuario) saludo.textContent = `Hola, ${usuario.nombre}` + (esGerente ? " (Gerente)" : "");
 
+  const navFacturas = document.getElementById("nav-facturas");
+  if (navFacturas && esGerente) navFacturas.textContent = "Facturas";
+
   const salir = document.getElementById("btn-salir");
   if (salir) {
     salir.addEventListener("click", (e) => {

@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +26,7 @@ public class CompraService {
     // El comprador ya viene verificado desde el token de sesión (no se confía en lo que mande el navegador).
     // Recibe solo los ids de los productos: un mismo id repetido = una unidad más.
     @Transactional
-    public Compra registrarCompra(List<Long> productosIds, Comprador comprador) {
+    public Compra registrarCompra(List<Long> productosIds, Comprador comprador, String medioPago) {
 
         if (productosIds == null || productosIds.isEmpty()) {
             throw new RuntimeException("El carrito está vacío");
@@ -77,6 +79,8 @@ public class CompraService {
         factura.setSubtotal(subtotal);
         factura.setIva(iva);
         factura.setTotal(total);
+        factura.setMedioPago(medioPago);
+        factura.setFecha(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
         factura.setCompra(compra);
         compra.setFactura(factura);
 
