@@ -202,3 +202,126 @@ background:var(--paper);border-radius:0 46% 38% 0/0 30% 50% 0}
 .gracias .acciones{justify-content:center}
 @media (max-width:420px){.gracias-cab{grid-template-columns:1fr;justify-items:center;text-align:center}}
 @media (prefers-reduced-motion:reduce){.gracias[open]{animation:none}}
+
+/* ===== Facturas: lista (gerente y clientes) ===== */
+.solo-lectores{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+footer a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+footer a:hover{color:var(--foam)}
+.pagina-facturas{max-width:1100px;margin:0 auto;padding:2.2rem 1.2rem 4.5rem}
+.pagina-facturas h1{margin:0;font:400 clamp(2rem,5vw,3.2rem)/1.05 var(--display)}
+.pagina-facturas h1::after{content:"";display:block;width:min(200px,60%);height:12px;margin-top:.7rem;background:var(--onda) repeat-x}
+.subtitulo{margin:.8rem 0 0;max-width:62ch;color:var(--teal);font-weight:700}
+.resumen{display:flex;gap:1rem;flex-wrap:wrap;margin:1.4rem 0}
+.resumen div{padding:.7rem 1.3rem;background:var(--sky);border:2px solid var(--ocean);border-radius:22px;box-shadow:3px 3px 0 var(--foam)}
+.resumen b{display:block;font:400 1.6rem/1.2 var(--display)}
+.resumen span{font-size:.75rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--teal)}
+.buscador{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1.2rem}
+.buscador input{flex:1;min-width:220px;max-width:460px;padding:.6rem 1.1rem;border:2px solid var(--ocean);border-radius:999px;background:var(--crema);color:var(--ocean);font:1rem var(--texto)}
+.buscador input:focus{outline:3px solid var(--foam)}
+.cuenta{font-size:.85rem;font-weight:700;color:var(--teal)}
+.tabla-wrap{overflow-x:auto;background:var(--crema);border:2px solid var(--ocean);border-radius:26px;box-shadow:5px 5px 0 var(--teal)}
+.tabla{width:100%;min-width:780px;border-collapse:collapse}
+.tabla th{padding:.8rem 1rem;background:var(--ocean);color:var(--sand);text-align:left;font-size:.75rem;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
+.tabla td{padding:.75rem 1rem;border-bottom:1px dashed var(--thread);vertical-align:middle}
+.tabla tbody tr:last-child td{border-bottom:0}
+.tabla tbody tr:hover td{background:rgba(183,212,230,.45)}
+.tabla .num{text-align:right;white-space:nowrap}
+.tabla .f-nro{font-weight:700;white-space:nowrap}
+.solo-gerente[hidden]{display:none}
+.btn-mini{padding:.25rem .9rem;font-size:.8rem;white-space:nowrap}
+.pagina-facturas .estado{margin-top:1.2rem}
+
+/* ===== Factura (vista completa) ===== */
+.factura-pagina{max-width:920px;margin:0 auto;padding:2rem 1.2rem 4.5rem}
+.factura-acciones{display:flex;justify-content:space-between;gap:.8rem;flex-wrap:wrap;margin-bottom:1.2rem}
+.factura{position:relative;padding:1.8rem;background:#FBF6EA;color:var(--ocean);border:2px solid var(--ocean);border-radius:20px;box-shadow:6px 6px 0 var(--teal);outline:2px dashed var(--thread);outline-offset:-9px}
+.f-cab{display:grid;grid-template-columns:1fr auto 1fr;gap:1.2rem;align-items:start;padding-bottom:1.2rem;border-bottom:2px solid var(--ocean)}
+.f-cab p{margin:.15rem 0;font-size:.85rem}
+.f-cab p span{color:var(--teal);font-weight:700}
+.f-logo{height:84px;width:auto;display:block;margin:0 0 .3rem -.3rem}
+.f-razon{font:400 1.25rem/1.1 var(--display);margin:0 0 .4rem!important}
+.f-letra{display:grid;justify-items:center;width:84px;padding:.25rem 0 .35rem;background:var(--sky);border:2px solid var(--ocean);border-radius:14px;text-align:center}
+.f-letra span{font:400 2.8rem/1 var(--display)}
+.f-letra small{font-size:.65rem;font-weight:700;letter-spacing:.05em}
+.f-comprobante{text-align:right}
+.f-comprobante h1{margin:0;font:400 2.2rem/1 var(--display)}
+.f-original{display:inline-block;padding:0 .7rem;border:2px solid var(--teal);border-radius:999px;color:var(--teal);font-size:.7rem!important;font-weight:700;letter-spacing:.12em}
+.f-datos{margin:1.2rem 0;padding:1rem 1.3rem;background:var(--paper);border-radius:18px}
+.f-datos h2{margin:0 0 .6rem;font:400 1.15rem var(--display)}
+.f-datos dl{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem 1.5rem;margin:0}
+.f-datos dt{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal)}
+.f-datos dd{margin:0;font-weight:700;overflow-wrap:anywhere}
+.f-datos .f-ancho{grid-column:1/-1}
+.f-tabla-wrap{box-shadow:none;border-radius:16px}
+.f-tabla{width:100%;min-width:560px;border-collapse:collapse}
+.f-tabla th{padding:.65rem .8rem;background:var(--ocean);color:var(--sand);text-align:left;font-size:.72rem;letter-spacing:.07em;text-transform:uppercase}
+.f-tabla td{padding:.7rem .8rem;border-bottom:1px dashed var(--thread);vertical-align:top}
+.f-tabla tbody tr:last-child td{border-bottom:0}
+.f-tabla .num{text-align:right;white-space:nowrap}
+.f-cod{font-weight:700;white-space:nowrap}
+.f-prod{display:flex;gap:.8rem;align-items:flex-start}
+.f-prod img{width:54px;height:68px;flex:none;object-fit:cover;border:2px solid var(--ocean);border-radius:999px 999px 10px 10px;background:var(--sky)}
+.f-prod div{display:flex;flex-direction:column;gap:.1rem}
+.f-prod span{font-size:.82rem;color:var(--teal)}
+.f-prod em{font-size:.75rem;font-style:normal;font-weight:700;text-transform:capitalize}
+.f-totales{display:grid;grid-template-columns:1fr auto;gap:.3rem 1.5rem;width:min(360px,100%);margin:1.2rem 0 0 auto;padding:.9rem 1.2rem;background:var(--sand);border-radius:18px}
+.f-totales dt,.f-totales dd{margin:0}
+.f-totales dd{text-align:right;font-weight:700}
+.f-totales .f-total{padding-top:.4rem;border-top:2px solid var(--ocean);font:400 1.45rem var(--display)}
+.f-pie{margin-top:1.5rem;padding-top:1rem;border-top:2px dashed var(--thread);text-align:center;font-size:.82rem;color:var(--teal)}
+.f-pie p{margin:.25rem 0}
+
+/* ===== Términos y condiciones ===== */
+.legal{max-width:820px;margin:0 auto;padding:2.5rem 1.2rem 4.5rem}
+.legal h1{margin:0;font:400 clamp(2rem,5vw,3.2rem)/1.05 var(--display)}
+.legal h1::after{content:"";display:block;width:min(200px,60%);height:12px;margin-top:.7rem;background:var(--onda) repeat-x}
+.legal-intro{max-width:62ch;font-size:1.05rem}
+.legal section{margin-top:1.3rem;padding:1.2rem 1.5rem;background:var(--crema);border:2px solid var(--ocean);border-radius:26px;box-shadow:4px 4px 0 var(--foam)}
+.legal section h2{margin:0 0 .5rem;font:400 1.5rem/1.1 var(--display)}
+.legal section p,.legal section ul{margin:.4rem 0}
+.legal section ul{padding-left:1.2rem}
+.legal section li{margin:.3rem 0}
+.legal-destacado{background:var(--sky)!important;box-shadow:5px 5px 0 var(--teal)!important}
+.legal-fecha{margin-top:1.5rem;font-size:.85rem;color:var(--teal);font-weight:700}
+.legal-nota{margin:0 0 .8rem;font-size:.8rem;color:var(--teal)}
+.legal-nota a{font-weight:700}
+
+@media(max-width:700px){
+.f-cab{grid-template-columns:1fr}
+.f-comprobante{text-align:left}
+.f-letra{order:-1}
+.f-datos dl{grid-template-columns:1fr}
+.factura{padding:1.2rem}
+}
+
+/* ===== Impresión: solo la factura, sin menús ===== */
+@media print{
+.cinta,header,footer,.no-imprimir{display:none!important}
+body{background:#fff!important}
+.factura-pagina{max-width:none;padding:0}
+.factura{box-shadow:none;outline:none;border:1px solid #000;border-radius:0;background:#fff}
+.f-tabla-wrap{overflow:visible}
+.f-cab,.f-datos,.f-tabla th,.f-totales,.f-letra{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
+/* ===== Barra superior siempre visible (compacta) ===== */
+html{scroll-padding-top:80px}
+header{position:sticky;top:0;z-index:50;background:var(--crema);border-bottom:2px solid var(--ocean);box-shadow:0 3px 0 var(--sand)}
+header .barra{padding:.25rem 1.2rem}
+.logo img,.logo svg{height:52px}
+header nav a{padding:.2rem .85rem;font-size:.95rem}
+@media(max-width:700px){
+.logo img,.logo svg{height:42px}
+.barra{padding:.3rem .8rem;gap:.3rem}
+html{scroll-padding-top:120px}
+}
+
+/* ===== Pago con tarjeta ===== */
+.pago{width:min(480px,94vw)}
+.pago-total{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin:0 0 1rem;padding:.7rem 1.1rem;background:var(--sand);border-radius:18px;font-weight:700}
+.pago-total b{font:400 1.6rem var(--display)}
+.pago .campo{display:flex;flex-direction:column;gap:.25rem;margin-bottom:.8rem}
+.pago .fila2{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem}
+.pago label{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal)}
+.pago input,.pago select{width:100%;padding:.6rem .9rem;border:2px solid var(--ocean);border-radius:16px;background:var(--paper);color:var(--ocean);font:1rem var(--texto)}
+.pago input:focus,.pago select:focus{outline:3px solid var(--foam);outline-offset:0}

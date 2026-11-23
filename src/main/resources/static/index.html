@@ -19,6 +19,7 @@
         <a href="index.html" class="activo">Inicio</a>
         <a href="#catalogo">Colección</a>
         <a href="nosotros.html">Nosotros</a>
+        <a href="facturas.html" id="nav-facturas">Mis compras</a>
         <a href="#" id="btn-carrito">Carrito (0)</a>
         <span id="saludo"></span>
         <a href="#" id="btn-salir">Salir</a>
@@ -128,6 +129,7 @@
 
   <footer>
     <p><strong>Prisma</strong> · hola@prisma.com</p>
+    <p><a href="terminos.html">Términos y condiciones</a></p>
     <p>© 2026 Prisma. Todos los derechos reservados.</p>
   </footer>
 
@@ -140,11 +142,51 @@
       <dt>IVA (21%)</dt><dd id="c-iva"></dd>
       <dt>Total</dt><dd id="c-total"></dd>
     </dl>
+    <p class="legal-nota">Al confirmar aceptás los <a href="terminos.html" target="_blank" rel="noopener">términos y condiciones</a>: las devoluciones se aceptan hasta 24 horas después de recibir la prenda y las prendas blancas no tienen devolución.</p>
     <p id="carrito-msg" class="aviso" role="alert" hidden></p>
     <div class="acciones">
       <button type="button" id="c-cerrar" class="btn btn-claro">Seguir mirando</button>
-      <button type="button" id="c-comprar" class="btn">Confirmar compra</button>
+      <button type="button" id="c-comprar" class="btn">Continuar al pago</button>
     </div>
+  </dialog>
+
+  <!-- Pago con tarjeta -->
+  <dialog id="pago" class="carrito pago" aria-labelledby="pago-titulo">
+    <h2 id="pago-titulo">Pagar con tarjeta</h2>
+    <p class="pago-total"><span>Total a pagar</span> <b id="p-total"></b></p>
+    <form id="form-pago" novalidate autocomplete="on">
+      <div class="campo">
+        <label for="p-tipo">Tipo de tarjeta</label>
+        <select id="p-tipo">
+          <option value="Tarjeta de crédito">Tarjeta de crédito</option>
+          <option value="Tarjeta de débito">Tarjeta de débito</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="p-numero">Número de tarjeta</label>
+        <input type="text" id="p-numero" inputmode="numeric" autocomplete="cc-number" placeholder="0000 0000 0000 0000" maxlength="23">
+      </div>
+      <div class="campo">
+        <label for="p-titular">Nombre del titular</label>
+        <input type="text" id="p-titular" autocomplete="cc-name" placeholder="Como figura en la tarjeta">
+      </div>
+      <div class="fila2">
+        <div class="campo">
+          <label for="p-venc">Vencimiento</label>
+          <input type="text" id="p-venc" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/AA" maxlength="5">
+        </div>
+        <div class="campo">
+          <label for="p-cvv">Código de seguridad</label>
+          <input type="password" id="p-cvv" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4">
+        </div>
+      </div>
+      <p class="legal-nota">Pago de demostración: no se cobra dinero real y no guardamos los datos de tu tarjeta. En tu factura solo queda el tipo de tarjeta y los últimos 4 dígitos. Podés usar cualquier número de 16 dígitos, cualquier vencimiento y cualquier código.</p>
+      <p id="pago-msg" class="aviso" role="alert" hidden></p>
+      <div class="acciones">
+        <button type="button" id="p-volver" class="btn btn-claro">Volver al carrito</button>
+        <button type="submit" id="p-pagar" class="btn">Pagar</button>
+      </div>
+    </form>
   </dialog>
 
   <!-- Gracias por tu compra -->
@@ -165,6 +207,7 @@
         <dt>Total</dt><dd id="g-total"></dd>
       </dl>
       <div class="acciones">
+        <a href="#" id="g-factura" class="btn btn-claro">Ver factura completa</a>
         <button type="button" id="g-cerrar" class="btn">Seguir mirando</button>
       </div>
     </div>

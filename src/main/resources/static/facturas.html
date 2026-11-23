@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prisma · Facturas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="img/hilo.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/sesion.js"></script>
+</head>
+<body>
+  <div class="cinta"></div>
+  <header>
+    <div class="barra">
+      <a class="logo" href="index.html"><img src="img/logo-web.svg" alt="Prisma, ir al inicio"></a>
+      <nav>
+        <a href="index.html">Inicio</a>
+        <a href="index.html#catalogo">Colección</a>
+        <a href="nosotros.html">Nosotros</a>
+        <a href="facturas.html" id="nav-facturas" class="activo">Mis compras</a>
+        <span id="saludo"></span>
+        <a href="#" id="btn-salir">Salir</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="pagina-facturas">
+    <h1 id="titulo">Mis compras</h1>
+    <p id="subtitulo" class="subtitulo"></p>
+
+    <div class="resumen" id="resumen"></div>
+
+    <div class="buscador">
+      <label for="buscar" class="solo-lectores">Buscar</label>
+      <input type="search" id="buscar" placeholder="Buscar por cliente, correo, CUIT o número…" autocomplete="off">
+      <span id="cuenta" class="cuenta" aria-live="polite"></span>
+    </div>
+
+    <div class="tabla-wrap">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>N° de factura</th>
+            <th>Fecha</th>
+            <th class="solo-gerente">Cliente</th>
+            <th class="solo-gerente">CUIT / CUIL</th>
+            <th class="solo-gerente">Correo</th>
+            <th class="num">Prendas</th>
+            <th class="num">Total</th>
+            <th><span class="solo-lectores">Ver</span></th>
+          </tr>
+        </thead>
+        <tbody id="filas"></tbody>
+      </table>
+    </div>
+    <p id="vacio" class="estado" hidden></p>
+  </main>
+
+  <footer>
+    <p><strong>Prisma</strong> · hola@prisma.com</p>
+    <p><a href="terminos.html">Términos y condiciones</a></p>
+    <p>© 2026 Prisma. Todos los derechos reservados.</p>
+  </footer>
+
+  <script src="js/facturas.js"></script>
+</body>
+</html>
